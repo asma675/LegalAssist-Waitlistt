@@ -1,84 +1,57 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export type AnimatedTextProps = {
   text: string;
   as?: keyof JSX.IntrinsicElements;
-  variant?: "type" | "reveal" | "pop";
   className?: string;
-
-  /** delay before animation (ms) */
+  variant?: 'type' | 'reveal';
+  typeSpeedMs?: number;
   delayMs?: number;
-
-  /** alias for delayMs (backwards compatible) */
-  delay?: number;
-
-  /** typing speed (ms per char) */
-  speedMs?: number;
 };
-
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function AnimatedText({
   text,
-  as = "div",
-  variant = "reveal",
-  className,
-  delayMs,
-  delay,
-  speedMs = 18,
+  as: Tag = 'div',
+  className = '',
+  variant = 'reveal',
+  typeSpeedMs = 20,
+  delayMs = 0,
 }: AnimatedTextProps) {
-  const Tag = as;
+  const [displayed, setDisplayed] = useState(
+    variant === 'type' ? '' : text
+  );
+  const [visible, setVisible] = useState(variant !== 'reveal');
 
-  const resolvedDelay = delayMs ?? delay ?? 0;
-
-  const [displayed, setDisplayed] = useState(variant === "type" ? "" : text);
-  const [visible, setVisible] = useState(variant !== "reveal");
-
-  // Typing
   useEffect(() => {
-    if (variant !== "type") return;
+    const delayTimer = setTimeout(() => {
+      if (variant === 'type') {
+        let i = 0;
+        const interval = setInterval(() => {
+          setDisplayed(text.slice(0, i + 1));
+          i++;
+          if (i >= text.length) clearInterval(interval);
+        }, typeSpeedMs);
+      } else {
+        setVisible(true);
+      }
+    }, delayMs);
 
-    let startTimeout: ReturnType<typeof setTimeout> | null = null;
-    let interval: ReturnType<typeof setInterval> | null = null;
-    let index = 0;
-
-    startTimeout = setTimeout(() => {
-      interval = setInterval(() => {
-        index += 1;
-        setDisplayed(text.slice(0, index));
-        if (index >= text.length && interval) clearInterval(interval);
-      }, speedMs);
-    }, resolvedDelay);
-
-    return () => {
-      if (startTimeout) clearTimeout(startTimeout);
-      if (interval) clearInterval(interval);
-    };
-  }, [text, variant, speedMs, resolvedDelay]);
-
-  // Reveal / Pop
-  useEffect(() => {
-    if (variant === "type") return;
-    const t = setTimeout(() => setVisible(true), resolvedDelay);
-    return () => clearTimeout(t);
-  }, [variant, resolvedDelay]);
+    return () => clearTimeout(delayTimer);
+  }, [text, variant, typeSpeedMs, delayMs]);
 
   return (
     <Tag
-      className={cx(
-        "transition-all duration-700 ease-out",
-        className,
-        variant === "reveal" && !visible && "opacity-0 translate-y-4",
-        variant === "reveal" && visible && "opacity-100 translate-y-0",
-        variant === "pop" && !visible && "opacity-0 scale-95",
-        variant === "pop" && visible && "opacity-100 scale-100"
-      )}
+      className={`${className} ${
+        variant === 'reveal'
+          ? `transition-all duration-700 ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`
+          : ''
+      }`}
     >
-      {variant === "type" ? displayed : text}
+      {variant === 'type' ? displayed : text}
     </Tag>
   );
 }
