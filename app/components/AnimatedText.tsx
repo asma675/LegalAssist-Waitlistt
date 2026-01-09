@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import clsx from "clsx";
 
 export type AnimatedTextProps = {
   text: string;
@@ -19,6 +18,10 @@ export type AnimatedTextProps = {
   speedMs?: number;
 };
 
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export default function AnimatedText({
   text,
   as = "div",
@@ -32,49 +35,45 @@ export default function AnimatedText({
 
   const resolvedDelay = delayMs ?? delay ?? 0;
 
-  const [displayed, setDisplayed] = useState(
-    variant === "type" ? "" : text
-  );
+  const [displayed, setDisplayed] = useState(variant === "type" ? "" : text);
   const [visible, setVisible] = useState(variant !== "reveal");
 
-  /* ───────────────────────── Typing Effect ───────────────────────── */
+  // Typing
   useEffect(() => {
     if (variant !== "type") return;
 
-    let timeout: NodeJS.Timeout;
+    let startTimeout: ReturnType<typeof setTimeout> | null = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
     let index = 0;
 
-    timeout = setTimeout(() => {
-      const interval = setInterval(() => {
-        index++;
+    startTimeout = setTimeout(() => {
+      interval = setInterval(() => {
+        index += 1;
         setDisplayed(text.slice(0, index));
-
-        if (index >= text.length) {
-          clearInterval(interval);
-        }
+        if (index >= text.length && interval) clearInterval(interval);
       }, speedMs);
     }, resolvedDelay);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      if (startTimeout) clearTimeout(startTimeout);
+      if (interval) clearInterval(interval);
+    };
   }, [text, variant, speedMs, resolvedDelay]);
 
-  /* ───────────────────────── Reveal / Pop Effect ───────────────────────── */
+  // Reveal / Pop
   useEffect(() => {
     if (variant === "type") return;
-
     const t = setTimeout(() => setVisible(true), resolvedDelay);
     return () => clearTimeout(t);
   }, [variant, resolvedDelay]);
 
   return (
     <Tag
-      className={clsx(
+      className={cx(
         "transition-all duration-700 ease-out",
         className,
-
         variant === "reveal" && !visible && "opacity-0 translate-y-4",
         variant === "reveal" && visible && "opacity-100 translate-y-0",
-
         variant === "pop" && !visible && "opacity-0 scale-95",
         variant === "pop" && visible && "opacity-100 scale-100"
       )}
