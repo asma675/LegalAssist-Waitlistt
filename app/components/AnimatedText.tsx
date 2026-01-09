@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import clsx from "clsx";
 
 export type AnimatedTextVariant = "type" | "reveal";
 
@@ -10,18 +9,24 @@ export type AnimatedTextProps = {
   text: string;
   className?: string;
 
+  /** "type" = typing effect, "reveal" = fade/slide in */
   variant?: AnimatedTextVariant;
 
-  
+  /** Delay before animation starts (preferred: delayMs, alias: delay) */
   delayMs?: number;
   delay?: number;
 
-
+  /** Typing speed in ms per character (preferred: typeSpeedMs, alias: speedMs) */
   typeSpeedMs?: number;
   speedMs?: number;
 
+  /** Reveal duration (ms) for the "reveal" animation */
   revealDurationMs?: number;
 };
+
+function cn(...classes: Array<string | undefined | null | false>) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function AnimatedText({
   as: Tag = "div",
@@ -37,7 +42,6 @@ export default function AnimatedText({
   const startDelay = delayMs ?? delay ?? 0;
   const typingSpeed = typeSpeedMs ?? speedMs ?? 18;
 
-  // For typing effect
   const [shown, setShown] = useState(variant === "type" ? "" : text);
   const [isVisible, setIsVisible] = useState(variant === "reveal" ? false : true);
 
@@ -68,21 +72,22 @@ export default function AnimatedText({
       if (t1) clearTimeout(t1);
       if (t2) clearInterval(t2);
     };
-  }, [variant, chars, startDelay, typingSpeed, text]);
+  }, [variant, chars, startDelay, typingSpeed]);
 
   if (variant === "type") {
     return (
-      <Tag className={clsx(className)}>
+      <Tag className={cn(className)}>
         {shown}
-        <span className="ml-0.5 inline-block w-[0.6ch] animate-pulse opacity-70">|</span>
+        <span className="ml-0.5 inline-block w-[0.6ch] animate-pulse opacity-70">
+          |
+        </span>
       </Tag>
     );
   }
 
-  // reveal
   return (
     <Tag
-      className={clsx(
+      className={cn(
         className,
         "transition-all will-change-transform",
         isVisible ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
