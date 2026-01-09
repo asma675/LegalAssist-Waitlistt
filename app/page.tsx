@@ -331,7 +331,6 @@ export default function Page() {
               variant="reveal"
               delayMs={80}
               className="mt-2 text-sm text-slate-600 dark:text-slate-300"
-              text="Add/remove images in /public/screens."
             />
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
