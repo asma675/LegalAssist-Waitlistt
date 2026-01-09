@@ -14,8 +14,8 @@ export default function AboutPage() {
       <div className="space-y-6 text-sm text-slate-700 dark:text-slate-200">
         <div>
           <p className="leading-relaxed">
-            Hi, I’m <span className="font-semibold text-slate-900 dark:text-white">Asma Ahmed</span> — a Canadian citizen based in Toronto and
-            an Honours Bachelor of Computer Science (Cloud Computing) student at Sheridan College.
+            Hi, I’m <span className="font-semibold text-slate-900 dark:text-white">Asma Ahmed</span> — a Canadian based in Toronto and
+            an Honours Bachelor of Computer Science (Cloud Computing) 3rd year student at Sheridan College.
           </p>
           <p className="mt-3 leading-relaxed">
             <span className="font-semibold text-slate-900 dark:text-white">Why LegalAssist?</span> I’ve always been fascinated by how legal work
