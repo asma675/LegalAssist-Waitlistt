@@ -9,7 +9,7 @@ export default function AboutPage() {
     <MarketingShell
       active="about"
       title="About LegalAssist"
-      subtitle="Built by a developer who loves both law and technology — and wanted one workspace that feels like a real firm system."
+      subtitle="Built by a developer who loves both law and technology and wanted one workspace that feels like a real firm system."
     >
       <div className="space-y-6 text-sm text-slate-700 dark:text-slate-200">
         <div>
