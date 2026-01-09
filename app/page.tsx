@@ -158,7 +158,7 @@ export default function Page() {
                 Join Waitlist
               </a>
 
-              {/* ✅ Sign In now links to your real website */}
+              {/* Sign In my website */}
               <a
                 href="https://legal-assist.co/"
                 target="_blank"
@@ -331,6 +331,7 @@ export default function Page() {
               variant="reveal"
               delayMs={80}
               className="mt-2 text-sm text-slate-600 dark:text-slate-300"
+              text="Preview the LegalAssist UI flow across key pages."
             />
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
